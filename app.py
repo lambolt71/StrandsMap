@@ -4,7 +4,7 @@ import numpy as np
 import random
 from collections import deque
 
-# --- Hexagon utility functions ---
+# ---------- Drawing logic ----------
 def hexagon(center_x, center_y, size):
     angles = np.linspace(0, 2 * np.pi, 7)
     x_hex = center_x + size * np.cos(angles)
@@ -17,23 +17,21 @@ def axial_to_cube(q, r):
 def cube_distance(a, b):
     return max(abs(a[0] - b[0]), abs(a[1] - b[1]), abs(a[2] - b[2]))
 
-# --- Main draw function ---
 def draw_custom_HexHex(
     N=5, hex_size=1, line_color='black', line_thickness=0.5, cell_color='lightblue',
     background_color='white', spacing=0.0, add_coords=False, add_center_dot=False,
     show_ring=True, show_corner_edge=True, title=None,
-    ring_values=None, show_values=False, font_size=7
+    ring_values=None, show_values=False, font_size=8
 ):
     fig, ax = plt.subplots(figsize=(8, 8))
     fig.patch.set_facecolor(background_color)
     ax.set_facecolor(background_color)
-
+    
     effective_hex_size = hex_size * (1 - spacing)
     center = (0, 0, 0)
 
-    # Prepare ring values
-    ring_value_queues = []
     if ring_values is not None:
+        ring_value_queues = []
         for i, vals in enumerate(ring_values):
             if i < 2:
                 ring_value_queues.append(deque(sorted(vals)))
@@ -56,6 +54,7 @@ def draw_custom_HexHex(
             cube = axial_to_cube(q, r)
             ring = cube_distance(center, cube) + 1
             ring_radius = ring - 1
+
             corner_coords = [
                 (ring_radius, 0),
                 (0, ring_radius),
@@ -91,13 +90,13 @@ def draw_custom_HexHex(
 
     ax.set_aspect('equal')
     ax.axis('off')
-    plt.title(title or f"HexHex{N} Board", fontsize=16)
+    plt.title(title if title else f"HexHex{N} with Labels", fontsize=14)
     st.pyplot(fig)
 
-# --- Streamlit UI ---
+
+# ---------- Streamlit UI ----------
 st.title("Strands Random Board Generator")
 
-# Configuration options
 seed = st.selectbox("Choose board size (seed)", [6, 7])
 
 hex_size = st.slider("Hex size", 0.5, 2.0, 1.0, 0.1)
@@ -116,54 +115,54 @@ show_ring = st.checkbox("Show Ring number", False)
 show_corner_edge = st.checkbox("Show Corner/Edge label", False)
 show_values = st.checkbox("Show ring values (Strands randomization)", True)
 
-# Define board data
-if seed == 6:
-    N = 6
-    ring_values = [
-        [1],
-        [1, 1, 1, 2, 2, 2],
-        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
-        [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
-    ]
-else:
-    N = 7
-    ring_values = [
-        [1],
-        [2, 1, 1, 2, 2, 2],
-        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3],
-        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3],
-        [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
-        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
-        [4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
-    ]
+# --- Generate Button ---
+if st.button("Generate / Refresh Board"):
+    if seed == 6:
+        N = 6
+        ring_values = [
+            [1],
+            [1, 1, 1, 2, 2, 2],
+            [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2],
+            [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+            [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
+        ]
+    else:
+        N = 7
+        ring_values = [
+            [1],
+            [2, 1, 1, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3],
+            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3],
+            [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
+            [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+            [4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+        ]
 
-# Render the board
-draw_custom_HexHex(
-    N=N,
-    hex_size=hex_size,
-    line_color=line_color,
-    line_thickness=line_thickness,
-    cell_color=cell_color,
-    background_color=background_color,
-    spacing=spacing,
-    add_coords=add_coords,
-    add_center_dot=add_center_dot,
-    show_ring=show_ring,
-    show_corner_edge=show_corner_edge,
-    title=f"Strands Randomized Setup (HexHex{N})",
-    ring_values=ring_values,
-    show_values=show_values,
-    font_size=font_size
-)
+    draw_custom_HexHex(
+        N=N,
+        hex_size=hex_size,
+        line_color=line_color,
+        line_thickness=line_thickness,
+        cell_color=cell_color,
+        background_color=background_color,
+        spacing=spacing,
+        add_coords=add_coords,
+        add_center_dot=add_center_dot,
+        show_ring=show_ring,
+        show_corner_edge=show_corner_edge,
+        title=f"Strands Randomized Setup (HexHex{N})",
+        ring_values=ring_values,
+        show_values=show_values,
+        font_size=font_size
+    )
 
-# Attribution and references
-st.markdown("""---""")
-st.markdown(
-    """
-    **Strands** is designed by [Nick Bentley](https://boardgamegeek.com/boardgame/364343/strands)  
-    This setup uses the [random algorithm from this BGG thread](https://boardgamegeek.com/thread/3331592/algorithm-for-setup)
-    """,
-    unsafe_allow_html=True
-)
+    # Attribution text
+    st.markdown("---")
+    st.markdown(
+        """
+        **Strands** is designed by [Nick Bentley](https://boardgamegeek.com/boardgame/364343/strands)  
+        This setup uses the [random algorithm from this BGG thread](https://boardgamegeek.com/thread/3331592/algorithm-for-setup)
+        """,
+        unsafe_allow_html=True
+    )
