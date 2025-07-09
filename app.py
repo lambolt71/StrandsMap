@@ -40,8 +40,9 @@ def draw_custom_HexHex(
                 edge_values = vals_sorted[:-6]
                 corner_values = vals_sorted[-6:]
                 random.shuffle(edge_values)
+                random.shuffle(corner_values)
                 ring_value_queues.append(deque(edge_values + corner_values))
-
+                
     for q in range(-N + 1, N):
         r1 = max(-N + 1, -q - N + 1)
         r2 = min(N - 1, -q + N - 1)
