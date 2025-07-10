@@ -16,12 +16,12 @@ def axial_to_cube(q, r):
 
 def cube_distance(a, b):
     return max(abs(a[0] - b[0]), abs(a[1] - b[1]), abs(a[2] - b[2]))
-
+    
 def draw_custom_HexHex(
     N=5, hex_size=1, line_color='black', line_thickness=0.5, cell_color='lightblue',
     background_color='white', spacing=0.0, add_coords=False, add_center_dot=False,
     show_ring=True, show_corner_edge=True, title=None,
-    ring_values=None, show_values=False, font_size=8
+    ring_values=None, show_values=False, font_size=8, value_colors=None
 ):
     fig, ax = plt.subplots(figsize=(8, 8))
     fig.patch.set_facecolor(background_color)
@@ -81,10 +81,11 @@ def draw_custom_HexHex(
                     else:
                         value = queue.popleft()
                     label_lines.append(str(value))
+                    label_color = value_colors.get(value, "black")
 
             if label_lines:
                 label = "\n".join(label_lines)
-                ax.text(x, y, label, ha='center', va='center', fontsize=font_size, color="black")
+                ax.text(x, y, label, ha='center', va='center', fontsize=font_size, color=label_color)
 
             if add_center_dot:
                 ax.plot(x, y, 'o', color='black', markersize=1)
@@ -115,6 +116,16 @@ add_center_dot = st.checkbox("Show center dot", False)
 show_ring = st.checkbox("Show Ring number", False)
 show_corner_edge = st.checkbox("Show Corner/Edge label", False)
 show_values = st.checkbox("Show ring values (Strands randomization)", True)
+
+# ---------- Ring Value Colors ----------
+st.sidebar.markdown("### 🎨 Ring Value Colors")
+value_colors = {
+    1: st.sidebar.color_picker("Color for value 1", "#000000"),
+    2: st.sidebar.color_picker("Color for value 2", "#1f77b4"),
+    3: st.sidebar.color_picker("Color for value 3", "#ff7f0e"),
+    4: st.sidebar.color_picker("Color for value 4", "#2ca02c"),
+    5: st.sidebar.color_picker("Color for value 5", "#d62728"),
+}
 
 # --- Generate Button ---
 if st.button("Generate / Refresh Board"):
@@ -155,7 +166,8 @@ if st.button("Generate / Refresh Board"):
         title=f"Strands Randomized Setup (HexHex{N})",
         ring_values=ring_values,
         show_values=show_values,
-        font_size=font_size
+        font_size=font_size,
+        value_colors=value_colors
     )
 
     # Attribution text
