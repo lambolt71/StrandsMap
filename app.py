@@ -103,7 +103,7 @@ seed = st.selectbox("Choose board size (seed)", [6, 7])
 
 hex_size = st.slider("Hex size", 0.5, 2.0, 1.0, 0.1)
 line_thickness = st.slider("Line thickness", 0.1, 3.0, 1.0, 0.1)
-font_size = st.slider("Label font size", 5, 20, 8)
+font_size = st.slider("Label font size", 5, 20, 16)
 
 line_color = st.color_picker("Line color", "#000000")
 cell_color = st.color_picker("Cell fill color", "#FFFFFF")
